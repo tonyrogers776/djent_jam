@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Bands</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>DjentJam</h1>
+        <a href="/home">Home</a>
+        <a href="/bands">Find a band</a>
+        <a href="/musicians">Find a muscian</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <h1 style="text-align: center; margin: 50px;">Post your band or scroll down to see a table of bands</h1>
+    <div class="post-entity">
+        <h2>Post your band</h2>
+        <form action="/create_band" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="band_name">Band Name</label>
+                <input type="text" id="band_name" name="band_name" class="form-control" placeholder="Band Name">
+            </div>
+            <div class="form-group">
+                <label for="genre">Genre</label>
+                <input type="text" id="genre" name="genre" class="form-control" placeholder="Genre">
+            </div>
+            <div class="form-group">
+                <label for="looking_for">Looking For</label>
+                <input type="text" name="looking_for" id="looking_for" class="form-control"
+                    placeholder="Looking for...">
+            </div>
+            <div class="form-group">
+                <label for="influences">influences</label>
+                <input type="text" name="influences" id="influences" class="form-control" placeholder="Influences">
+            </div>
+            <div class="form-group">
+                <label for="members">Members</label>
+                <input type="text" name="members" id="members" class="form-control" placeholder="Band members">
+            </div>
+            <div class="form-group">
+                <label for="contact_info">Contact Info</label>
+                <input type="text" name="contact_info" id="contact_info" class="form-control" placeholder="Contact Info">
+            </div>
+            <input class="btn" style="background-color: rgb(0,255,0); margin-top: 25px;" id="java-create" type="submit"
+                value="Create">
+            <input class="btn" style="background-color: orange; margin-top: 25px; margin-left: 390px;" id="java-reset"
+                type="reset">
+        </form>
+    </div>
+    <div id="musician-table">
+        <table class="table table-bordered table-dark">
+            <tr>
+                <th>Band Name</th>
+                <th>Genre</th>
+                <th>Looking For</th>
+                <th>Influences</th>
+                <th>Band Members</th>
+                <th>Date/Time Posted</th>
+                <th>Contact Info</th>
+                <th>Actions</th>
+            </tr>
+            {% for band in bands %}
+            <tr>
+                <td>{{band.band_name}}</td>
+                <td>{{band.genre}}</td>
+                <td>{{band.looking_for}}</td>
+                <td>{{band.influences}}</td>
+                <td>{{band.members}}</td>
+                <td>{{band.created_at}}</td>
+                <td>{{band.contact_info}}</td>
+                <td><a href="/delete_band/{{band.id}}">Delete</a>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</body>
+
+</html>

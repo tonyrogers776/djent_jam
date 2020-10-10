@@ -1,0 +1,30 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home),
+    path('login', views.login),
+    path('home', views.home),
+    path('create', views.create),
+    path('create_user', views.create_user),
+    path('logout', views.logout),
+    path('success', views.success),
+    path('profile', views.profile),
+    path('create_post', views.create_post),
+    path('like/<int:id>', views.like),
+    path('comment/<int:id>', views.comment),
+    path('delete_comment/<int:id>', views.delete_comment),
+    path('delete_post/<int:id>', views.delete_post),
+    path('edit_post/<int:id>', views.edit_post),
+    path('edit_post_success/<int:id>', views.edit_post_success),
+    path('edit_profile/<int:id>', views.edit_profile),
+    path('delete_profile/<int:id>', views.delete_profile),
+    path('update_user/<int:id>', views.update_user),
+    path('musicians', views.musicians),
+    path('create_musician', views.create_musician),
+    path('delete_musician/<int:id>', views.delete_musician),
+    path('bands', views.bands),
+    path('create_band', views.create_band),
+    path('delete_band/<int:id>', views.delete_band),
+    path('profile/<int:id>', views.view_profile),
+]

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>DjentJam</h1>
+        <a href="/home">Home</a>
+        <a href="/bands">Find a band</a>
+        <a href="/musicians">Find a muscian</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <h1 style="margin: 50px;">Welcome {{logged_user.first_name}}</h1>
+
+
+
+
+    <div class="wall-form">
+        <div class="wall-post">
+            <form action="/create_post" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <h2 style="margin-bottom: 25px;">Make a post</h2>
+                    <textarea style="margin-bottom: 25px;" class="form-control" rows="5" cols="40" placeholder="Whats on your mind?" name="message"
+                        id="message"></textarea>
+                </div>
+                <input type="submit" class="btn btn-success" value="Post">
+            </form>
+            <p>_______________________________________________</p>
+            {% for post in wall_messages %}
+            <h3><a class="name-link" href="/profile/{{post.poster.id}}">{{post.poster.first_name}} {{post.poster.last_name}}</a>:<br></h3>
+            <h4>{{post.message}}<br></h4>
+            <p>Created {{post.created_at}}</p>
+            <p style="display: inline;">Likes: {{post.user_likes.count}}</p>
+            <p style="margin-top: 25px;">Comments:<br>
+            <p>{% for comment in post.post_comments.all %}{{comment.poster.first_name}} {{comment.poster.last_name}}: {{comment.comment}}<br><a href="/delete_comment/{{comment.id}}" style="color: red; text-decoration: underline;"> Delete comment</a><br><br>{% endfor %}</p>
+            <form action="/comment/{{post.id}}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label style="display: block;" for="comment">Make a comment</label>
+                    <textarea id="comment" name="comment" class="form-control" placeholder="Your comment here"
+                        rows="3"></textarea>
+                    <input style="margin-top: 25px;" type="submit" class="btn btn-success" value="Comment">
+                    <a style=" margin-left: 60px; margin-top: 25px;" class="btn btn-primary" href="/like/{{post.id}}">Like Post</a>
+                    <a href="/edit_post/{{post.id}}" style="margin-left: 60px; margin-top: 25px; background-color: orange;" class="btn">Edit</a>
+                    <a href="/delete_post/{{post.id}}" class="btn btn-danger" style="margin-top: 25px; margin-left: 60px;">Delete Post</a>
+                </div>
+            </form>
+            <p>_______________________________________________</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>DjentJam</h1>
+        <a href="/home">Home</a>
+        <a href="/bands">Find a band</a>
+        <a href="/musicians">Find a muscian</a>
+        <a href="/login">Login</a>
+    </div>
+    <h1 style="text-align: center; margin: 50px;">Welcome! Sign in or create an account to post</h1>
+    <div class="wall-form">
+        <div class="wall-post">
+            {% for post in wall_messages %}
+            <h3><a class="name-link" href="/profile/{{post.poster.id}}">{{post.poster.first_name}} {{post.poster.last_name}}</a>:<br></h3>
+            <h4>{{post.message}}<br></h4>
+            <p>Created {{post.created_at}}</p>
+            <p style="display: inline;">Likes: {{post.user_likes.count}}</p>
+            <p style="margin-top: 25px;">Comments:<br>
+            <p>
+            <p>{% for comment in post.post_comments.all %}{{comment.poster.first_name}} {{comment.poster.last_name}}: {{comment.comment}}<br>{% endfor %}</p>
+            <p>_______________________________________________</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>

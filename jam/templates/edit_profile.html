@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>DjentJam</h1>
+        <a href="/home">Home</a>
+        <a href="/bands">Find a band</a>
+        <a href="/musicians">Find a muscian</a>
+        <a href="/profile">Profile</a>
+        <a href="/login">Login</a>
+    </div>
+    <h1 style="text-align: center; margin: 50px;">Edit Your Profile</h1>
+    <p style="text-align: center;">Fields with  *  are required</p>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="form">
+        <form action="/update_user/{{user.id}}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="first_name">First Name*</label>
+                <input type="text" name="first_name" id="first_name" class="form-control" value="{{user.first_name}}">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name*</label>
+                <input type="text" name="last_name" id="last_name" class="form-control" value="{{user.last_name}}">
+            </div>
+            <div class="form-group">
+                <label for="instruments_played">Instuments Played</label>
+                <input type="text" name="instruments_played" id="instruments_played" class="form-control" value="{{user.instruments_played}}">
+            </div>
+            <div id="form-group">
+                <label for="bio">Bio</label>
+                <textarea name="bio" id="bio" class="form-control" rows="3" >{{user.bio}}</textarea>
+            </div>
+            <input style="margin-top: 20px;" type="submit" class="btn btn-success" id="submit" value="Update Profile">
+            <input style="margin-left: 110px; margin-top: 20px;" type="reset" value="Reset all fields" class="btn btn-danger" id="reset">
+        </form>
+    </div>
+
+
+
+
+</body>
+
+</html>
