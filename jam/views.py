@@ -3,44 +3,10 @@ from django.contrib import messages
 from .models import *
 
 
-def home(request):
-    if 'user' in request.session:
-        context = {
-            'wall_messages': Wall_Message.objects.all(),
-            'logged_user': User.objects.get(id=request.session['id'])
-        }
-        return render(request, 'home_logged.html', context)
-    else:
-        context = {
-            'wall_messages': Wall_Message.objects.all()
-        }
-        return render(request, 'home.html', context)
+def index(request):
+    return render(request, 'index.html')
 
 def login(request):
-    return render(request, 'login.html')
-
-def create(request):
-    return render(request, 'create.html')
-
-def create_user(request):
-    if request.method == "GET":
-        return redirect('/')
-    errors = User.objects.validate(request.POST)
-    if errors:
-        for e in errors.values(): 
-            messages.error(request, e)
-            return redirect('/create')
-    else:
-        new_user = User.objects.register(request.POST)
-        request.session['user'] = new_user.first_name
-        request.session['id'] = new_user.id 
-        return redirect('/home')
-
-def logout(request):
-    request.session.clear()
-    return redirect('/')
-
-def success(request):
     errors = User.objects.login_validator(request.POST)
 
     if len(errors):
@@ -53,6 +19,56 @@ def success(request):
     request.session['id'] = user.id
     return redirect('/home')
 
+
+def create(request):
+    return render(request, 'create.html')
+
+def register(request):
+    if request.method == "GET":
+        return redirect('/')
+    errors = User.objects.validate(request.POST)
+    if errors:
+        for e in errors.values():
+            messages.error(request, e)
+            return redirect('/create')
+    else:
+        new_user = User.objects.register(request.POST)
+        request.session['user'] = new_user.first_name
+        request.session['id'] = new_user.id 
+        return redirect('/blog')
+
+
+def blog(request):
+    if 'user' in request.session:
+        context = {
+            'wall_messages': Wall_Message.objects.all(),
+            'logged_user': User.objects.get(id=request.session['id'])
+        }
+        return render(request, 'home_logged.html', context)
+    else:
+        context = {
+            'wall_messages': Wall_Message.objects.all()
+        }
+        return render(request, 'blog.html', context)
+
+
+def logout(request):
+    request.session.clear()
+    return redirect('/')
+
+def login(request):
+    errors = User.objects.login_validator(request.POST)
+
+    if len(errors):
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect('/login')
+
+    user = User.objects.get(email=request.POST['email'])
+    request.session['user'] = user.first_name 
+    request.session['id'] = user.id
+    return redirect('/blog')
+
 def profile(request):
     if 'user' not in request.session:
         return redirect('/')
@@ -62,12 +78,12 @@ def profile(request):
         }
         return render(request, 'profile_logged.html', context)
 
-def create_post(request):
+def create_blog_post(request):
     if 'user' not in request.session:
         return redirect('/')
     else:
-        Wall_Message.objects.create(message = request.POST['message'], poster = User.objects.get(id=request.session['id'], attachment = request.POST['attachment']))
-        return redirect('/home')
+        Wall_Message.objects.create(message = request.POST['message'], poster = User.objects.get(id=request.session['id']))
+        return redirect('/blog')
 
 def like(request, id):
     if 'user' not in request.session:
@@ -76,7 +92,7 @@ def like(request, id):
         liked_message = Wall_Message.objects.get(id=id)
         user_liking = User.objects.get(id=request.session['id'])
         liked_message.user_likes.add(user_liking)
-        return redirect('/home')
+        return redirect('/blog')
 
 def comment(request, id):
     if 'user' not in request.session:
@@ -85,28 +101,28 @@ def comment(request, id):
         poster = User.objects.get(id=request.session['id'])
         message = Wall_Message.objects.get(id=id)
         Comment.objects.create(comment= request.POST['comment'], poster=poster, Wall_Message=message)
-        return redirect('/home')
+        return redirect('/blog')
 
 def delete_comment(request, id):
     varx = Comment.objects.get(id=id)
     if request.session['id'] == varx.poster.id:
         Comment.objects.filter(id=id).delete()
-        return redirect('/home')
+        return redirect('/blog')
     else:
-        return redirect ('/home')
+        return redirect ('/blog')
 
 def delete_post(request, id):
     varz = Wall_Message.objects.get(id=id)
     if request.session['id'] == varz.poster.id:
         Wall_Message.objects.filter(id=id).delete()
-        return redirect('/home')
+        return redirect('/blog')
     else:
-        return redirect('/home')
+        return redirect('/blog')
 
 def edit_post(request, id):
     vary = Wall_Message.objects.get(id=id)
     if request.session['id'] != vary.poster.id:
-        return redirect('/home')
+        return redirect('/blog')
     else:
         context = {
             'wall_message': Wall_Message.objects.get(id=id)
@@ -117,7 +133,7 @@ def edit_post_success(request, id):
     updated_message = Wall_Message.objects.get(id=id)
     updated_message.message = request.POST['message']
     updated_message.save()
-    return redirect('/home')
+    return redirect('/blog')
 
 def edit_profile(request, id):
     if 'user' not in request.session:
@@ -173,35 +189,34 @@ def delete_musician(request, id):
     else:
         return redirect('/musicians')
 
-def bands(request):
+def gig_wall(request):
     if 'user' in request.session:
         context = {
-            'bands':Band.objects.all()
+            'gigs':Gig.objects.all()
         }
-        return render(request, 'bands_logged.html', context)
+        return render(request, 'gig_wall.html', context)
     else:
         context = {
-            'bands':Band.objects.all()
+            'gigs':Gig.objects.all()
         }
-        return render(request, 'bands.html', context)
+        return render(request, 'gig_wall.html', context)
 
-def create_band(request):
+def create_gig(request):
     if request.method == "GET":
         return redirect('/')
     else:
-        poster = User.objects.get(id=request.session['id'])
-        Band.objects.create(
-            band_name=request.POST['band_name'], genre=request.POST['genre'], looking_for=request.POST['looking_for'], influences=request.POST['influences'], poster=poster, members=request.POST['members'], contact_info=request.POST['contact_info'],
+        Gig.objects.create(
+            poster=User.objects.get(id=request.session['id']), details=request.POST['details'], contact_info=request.POST['contact_info'],
         )
-        return redirect('/bands')
+        return redirect('/gig_wall')
 
-def delete_band(request, id):
-    vara = Band.objects.get(id=id)
+def delete_gig(request, id):
+    vara = Gig.objects.get(id=id)
     if request.session['id'] == vara.poster.id:
-         Band.objects.filter(id=id).delete()
-         return redirect('/bands')
+         Gig.objects.filter(id=id).delete()
+         return redirect('/gig_wall')
     else:
-        return redirect('/bands')
+        return redirect('/gig_wall')
     
 def view_profile(request, id):
         context = {

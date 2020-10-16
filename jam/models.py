@@ -45,8 +45,6 @@ class UserManager(models.Manager):
             last_name = form['last_name'],
             email = form['email'],
             password = pw,
-            instruments_played = form['instruments_played'],
-            bio = form['bio']
         )
 
 class User(models.Model):
@@ -54,8 +52,6 @@ class User(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    instruments_played = models.CharField(max_length=255)
-    bio = models.CharField(max_length=500)
     objects = UserManager()
 
 class Wall_Message(models.Model):
@@ -72,25 +68,10 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-class Musician(models.Model):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    instruments_played = models.CharField(max_length=255)
-    preferred_genres = models.CharField(max_length=255)
-    gear = models.CharField(max_length=255)
+class Gig(models.Model):
+    contact_name = models.CharField(max_length=255)
+    details = models.CharField(max_length=500)
     poster = models.ForeignKey(User, related_name='user_musician', on_delete=models.CASCADE)
-    contact_info = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class Band(models.Model):
-    band_name = models.CharField(max_length=255)
-    genre = models.CharField(max_length=255)
-    looking_for = models.CharField(max_length=255)
-    influences = models.CharField(max_length=255)
-    members = models.CharField(max_length=255)
-    poster = models.ForeignKey(User, related_name='user_band', on_delete=models.CASCADE)
     contact_info = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
